@@ -49,7 +49,7 @@ def predict(model, full_img, **kwargs):
         class_idx = torch.argmax(probs, dim=0)
         image = torch.zeros(h, w, 3, dtype=torch.uint8)
 
-        for key in mapping:  
+        for key in mapping:
           idx = (class_idx == torch.tensor(key, dtype=torch.uint8))
           validx = (idx == 1)
           image[validx,:] = torch.tensor(mapping[key], dtype=torch.uint8)
@@ -72,7 +72,7 @@ def preprocess(pil_img, scale):
         img = img / 255
     return img
 
-    
+
 def calculate_val_area(mask_indices, valid_idx=2):
     area = (mask_indices == torch.tensor(valid_idx, dtype=torch.uint8)).sum()
     return area
@@ -94,13 +94,13 @@ def main():
 
         img = Image.open(fn)
         seg, mask_indices = predict(model=model,
-                           full_img=img, 
+                           full_img=img,
                            args=args)
 
         im = Image.fromarray(seg)
         im.save(args.output+'pred_'+name+'.jpeg')
 
-        return im 
+        return im
 
 
 if __name__ == "__main__":
