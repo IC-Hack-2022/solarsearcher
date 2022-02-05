@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(description='Predict masks from input images')
 parser.add_argument('--model', '-m', default='saved_models/CP_epoch30.pth',
                     metavar='FILE',
                     help="Specify the file in which the model is stored")
-parser.add_argument('--input', '-i', help='filenames of input images', required=True)
+parser.add_argument('--input', '-i', help='filenames of input images')
 parser.add_argument('--output', '-o', help='Filenames of ouput images')
 parser.add_argument('--scale', '-s', type=float, default=0.2)
 parser.add_argument('--mask-threshold', '-t', type=float, default=0.5)
@@ -54,7 +54,7 @@ def predict(model, full_img, **kwargs):
           validx = (idx == 1)
           image[validx,:] = torch.tensor(mapping[key], dtype=torch.uint8)
 
-        image = image.permute(1,2,0)
+        # image = image.permute(1,2,0)
         image = image.squeeze().cpu().numpy()
 
     return image, class_idx
@@ -73,7 +73,7 @@ def preprocess(pil_img, scale):
     return img
 
     
-def calculate_area(mask_indices, valid_idx=2):
+def calculate_val_area(mask_indices, valid_idx=2):
     area = (mask_indices == torch.tensor(valid_idx, dtype=torch.uint8)).sum()
     return area
 
@@ -100,6 +100,7 @@ def main():
         im = Image.fromarray(seg)
         im.save(args.output+'pred_'+name+'.jpeg')
 
+        return im 
 
 
 if __name__ == "__main__":
