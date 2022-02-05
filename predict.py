@@ -1,7 +1,6 @@
 import argparse
 import logging
 import os
-from tokenize import Double
 
 import numpy as np
 import torch
@@ -9,8 +8,8 @@ import torch.nn.functional as F
 from PIL import Image
 from torchvision import transforms
 
-from land_cover_classification_unet.unet import UNet
-from land_cover_classification_unet.utils.dataset import BasicDataset
+from models.unet import UNet
+
 
 parser = argparse.ArgumentParser(description='Predict masks from input images',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
