@@ -11,18 +11,16 @@ from torchvision import transforms
 from models.unet import UNet
 
 
-parser = argparse.ArgumentParser(description='Predict masks from input images',
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser = argparse.ArgumentParser(description='Predict masks from input images')
 parser.add_argument('--model', '-m', default='saved_models/CP_epoch30.pth',
                     metavar='FILE',
                     help="Specify the file in which the model is stored")
-parser.add_argument('--input', '-i', metavar='INPUT', nargs='+',
-                    help='filenames of input images', required=True)
-parser.add_argument('--output', '-o', metavar='INPUT', nargs='+',
-                    help='Filenames of ouput images')
+parser.add_argument('--input', '-i', help='filenames of input images', required=True)
+parser.add_argument('--output', '-o', help='Filenames of ouput images')
 parser.add_argument('--scale', '-s', type=float, default=0.2)
 parser.add_argument('--mask-threshold', '-t', type=float, default=0.5)
 parser.add_argument('--output', '-o', default='predictions/')
+parser.add_argument('--valid-idx', type=int, default=2)
 
 def predict(model, full_img, **kwargs):
 
@@ -74,6 +72,11 @@ def preprocess(pil_img, scale):
         img = img / 255
     return img
 
+    
+def calculate_area(mask_indices, valid_idx=2):
+    area = (mask_indices == torch.tensor(valid_idx, dtype=torch.uint8)).sum()
+    return area
+
 
 def main():
 
@@ -91,10 +94,8 @@ def main():
 
         img = Image.open(fn)
         seg, mask_indices = predict(model=model,
-                           full_img=img,
-                           scale_factor=args.scale,
-                           out_threshold=args.mask_threshold,
-                           device=device)
+                           full_img=img, 
+                           args=args)
 
         im = Image.fromarray(seg)
         im.save(args.output+'pred_'+name+'.jpeg')
