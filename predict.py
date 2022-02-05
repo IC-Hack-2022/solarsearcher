@@ -73,9 +73,10 @@ def preprocess(pil_img, scale):
     return img
 
 
-def calculate_val_area(mask_indices, valid_idx=2):
+def calculate_max_val_area(mask_indices, valid_idx=2):
     area = (mask_indices == torch.tensor(valid_idx, dtype=torch.uint8)).sum()
-    return area
+    frac_area = area / np.prod(mask_indices)
+    return frac_area
 
 
 def main():
