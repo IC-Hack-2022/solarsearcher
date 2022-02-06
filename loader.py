@@ -18,7 +18,7 @@ class Loader:
         self.db_tool = DBTool()
 
 
-    def load(self, location, zoom, img_size, outdir, seg_dir, scale=1):
+    def load(self, location, zoom, img_size, outdir, scale=1):
 
         image_coords = self.get_image_coords(location, zoom, img_size, scale)
 
@@ -113,7 +113,7 @@ class Loader:
         return coords
 
 
-    def load_country_images(self, image_coords, country, directory, seg_dir, scale=1):
+    def load_country_images(self, image_coords, country, directory, scale=1):
 
         size = 1280 if scale == 2 else 640
         for coord in image_coords:
@@ -139,8 +139,7 @@ class Loader:
             
             # update database with loaded images
             self.db_tool.dump(country, lat, long, f"{directory}/{country}_{lat}_{long}.jpg",
-                              f"{seg_dir}/{directory}/{country}_{lat}_{long}.jpg")
-
+                              f"segmented_images/{country}_{lat}_{long}.jpg")
 
 
 if __name__ == "__main__":

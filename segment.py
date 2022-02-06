@@ -8,6 +8,7 @@ import torch.nn.functional as F
 from PIL import Image
 from torchvision import transforms
 
+from db_tool import DBTool
 from models.unet import UNet
 
 class Segmenter:
@@ -18,6 +19,8 @@ class Segmenter:
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model.to(device=self.device)
         self.model.load_state_dict(torch.load(saved_model, self.device))
+
+        self.db_tool = DBTool()
         
 
     def predict(self, model, full_img, scale):
@@ -70,8 +73,8 @@ class Segmenter:
 
     def calculate_max_val_area(self, mask_indices, valid_idx=2):
         area = (mask_indices == torch.tensor(valid_idx, dtype=torch.uint8)).sum()
-        frac_area = area / np.prod(mask_indices)
-        return frac_area
+        frac_area = area / np.prod(mask_indices.shape)
+        return frac_area.item()
 
 
     def segment(self, location, input_path, output_path, scale):
@@ -90,6 +93,11 @@ class Segmenter:
 
                 im = Image.fromarray(seg)
                 im.save(os.path.join(outpath, img_path))
+
+                # update db entry with frac area
+                frac = self.calculate_max_val_area(mask_indices)
+                latitude, longitude = float(img_path.split("_")[1]), float(img_path.strip(".jpg").split("_")[2])
+                self.db_tool.append_frac(location, latitude, longitude, frac)
 
 
 if __name__ == "__main__":

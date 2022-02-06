@@ -1,16 +1,14 @@
 {
-    "Luxembourg": [
-        {
-            "(49.63, 6.13)": {
-                "img_path": "images/Luxembourg/Luxembourg_49.63_6.13.jpg",
-                "seg_path": "1/images/Luxembourg/Luxembourg_49.63_6.13.jpg"
-            }
+    "Luxembourg": {
+        "(49.63, 6.13)": {
+            "img_path": "images/Luxembourg/Luxembourg_49.63_6.13.jpg",
+            "seg_path": "segmented_images/Luxembourg/Luxembourg_49.63_6.13.jpg",
+            "frac": 0.46331024169921875
         },
-        {
-            "(50.0, 6.13)": {
-                "img_path": "images/Luxembourg/Luxembourg_50.0_6.13.jpg",
-                "seg_path": "1/images/Luxembourg/Luxembourg_50.0_6.13.jpg"
-            }
+        "(50.0, 6.13)": {
+            "img_path": "images/Luxembourg/Luxembourg_50.0_6.13.jpg",
+            "seg_path": "segmented_images/Luxembourg/Luxembourg_50.0_6.13.jpg",
+            "frac": 0.5350875854492188
         }
-    ]
+    }
 }

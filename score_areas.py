@@ -3,20 +3,32 @@ from solarscore import SolarPower
 import ast
 
 
-def append_solar_scores():
+class Scorer:
 
-    solarpower = SolarPower(fname='PVOUT_local.tif')
+    def __init__(self, fname='PVOUT_local.tif'):
+        self.fname = fname
+        
+        self.solarpower = SolarPower(fname)
+        
+        with open('db/db.json', 'r') as f:
+            self.db = json.load(f)
+    
+    def score(self, location):
 
-    with open('db/db.json', 'r') as f:
-        db = json.load(f)
-
-
-    for location, entries in db.items():
-        for entry in entries:
-            coord_str = list(entry.keys())[0]
+        scores = []
+        for coord_str, entry in self.db[location].items():
+            
             coords = ast.literal_eval(coord_str)
-            solarscore = solarpower.get_solar_power(coords)
+            frac = entry["frac"]
+            solarscore = self.solarpower.get_solar_power(coords) * frac
+            scores.append((coords, solarscore))
+
+        scores.sort(key = lambda x:x[1], reverse=True)
+        return scores
+
             
 
 if __name__ == "__main__":
-    append_solar_scores()
+    scorer = Scorer()
+    scores = scorer.score("Luxembourg")
+    print(scores)
