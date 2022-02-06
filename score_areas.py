@@ -1,14 +1,22 @@
 import json
 from solarscore import SolarPower
+import ast
 
 
 def append_solar_scores():
-    solar = SolarPower()
+
+    solarpower = SolarPower(fname='PVOUT_local.tif')
 
     with open('db/db.json', 'r') as f:
-        data = json.load(f)
+        db = json.load(f)
 
-    for coords in data['locations']:
-        data['locations']['score'] = solar.get_solar_power(coords)
 
-    return data
+    for location, entries in db.items():
+        for entry in entries:
+            coord_str = list(entry.keys())[0]
+            coords = ast.literal_eval(coord_str)
+            solarscore = solarpower.get_solar_power(coords)
+            
+
+if __name__ == "__main__":
+    append_solar_scores()

@@ -12,17 +12,11 @@ from models.unet import UNet
 
 
 parser = argparse.ArgumentParser(description='Predict masks from input images')
-<<<<<<< Updated upstream
 parser.add_argument('--model', '-m', default='saved_models/CP_epoch30.pth',
                     metavar='FILE',
                     help="Specify the file in which the model is stored")
 parser.add_argument('--input', '-i', help='filenames of input images')
 parser.add_argument('--output', '-o', help='Filenames of ouput images')
-=======
-parser.add_argument('--model', '-m', default='saved_models/CP_epoch30.pth')
-parser.add_argument('--input', '-i', default='images/')
-parser.add_argument('--output', '-o', default='segmented_images/')
->>>>>>> Stashed changes
 parser.add_argument('--scale', '-s', type=float, default=0.2)
 parser.add_argument('--valid-idx', type=int, default=2)
 

@@ -1,6 +1,7 @@
 data/
 land_cover_classification_unet/
-
+PVOUT_local.tif
+tmp/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
