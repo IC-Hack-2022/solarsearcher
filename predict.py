@@ -12,14 +12,18 @@ from models.unet import UNet
 
 
 parser = argparse.ArgumentParser(description='Predict masks from input images')
+<<<<<<< Updated upstream
 parser.add_argument('--model', '-m', default='saved_models/CP_epoch30.pth',
                     metavar='FILE',
                     help="Specify the file in which the model is stored")
 parser.add_argument('--input', '-i', help='filenames of input images')
 parser.add_argument('--output', '-o', help='Filenames of ouput images')
+=======
+parser.add_argument('--model', '-m', default='saved_models/CP_epoch30.pth')
+parser.add_argument('--input', '-i', default='images/')
+parser.add_argument('--output', '-o', default='segmented_images/')
+>>>>>>> Stashed changes
 parser.add_argument('--scale', '-s', type=float, default=0.2)
-parser.add_argument('--mask-threshold', '-t', type=float, default=0.5)
-parser.add_argument('--output', '-o', default='predictions/')
 parser.add_argument('--valid-idx', type=int, default=2)
 
 def predict(model, full_img, **kwargs):
@@ -54,7 +58,6 @@ def predict(model, full_img, **kwargs):
           validx = (idx == 1)
           image[validx,:] = torch.tensor(mapping[key], dtype=torch.uint8)
 
-        # image = image.permute(1,2,0)
         image = image.squeeze().cpu().numpy()
 
     return image, class_idx
@@ -84,22 +87,26 @@ def main():
     args = parser.parse_args()
 
     model = UNet(n_channels=3, n_classes=7)
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model.to(device=device)
-    model.load_state_dict(torch.load(args.model, device))
+    args.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model.to(device=args.device)
+    model.load_state_dict(torch.load(args.model, args.device))
 
-    for i, fn in enumerate(args.input):
+    fs = []
+    for f in os.listdir(args.input):
+        if f.endswith('jpg'):
+            fs.append(args.input+f)
 
-        name=fn.split('/')[-1]
-        name=name.split('.')[0]
+    for i, f in enumerate(fs):
 
-        img = Image.open(fn)
+        name=f.split('/')[-1]
+
+        img = Image.open(f)
         seg, mask_indices = predict(model=model,
                            full_img=img,
                            args=args)
 
         im = Image.fromarray(seg)
-        im.save(args.output+'pred_'+name+'.jpeg')
+        im.save(args.output + name)
 
         return im
 
