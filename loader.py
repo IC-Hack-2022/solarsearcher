@@ -6,6 +6,8 @@ import pprint
 import argparse
 import os
 
+from db_tool import DBTool
+
 class Loader:
 
     def __init__(self):
@@ -13,17 +15,21 @@ class Loader:
         with open('utils/bounding_boxes.json', 'r') as f:
             self.country_bounding_boxes = json.load(f)
 
+        self.db_tool = DBTool()
 
-    def load(self, location, zoom, img_size, outdir):
 
-        image_coords = self.get_image_coords(location, zoom, img_size)
+    def load(self, location, zoom, img_size, outdir, seg_dir, scale=1):
+
+        image_coords = self.get_image_coords(location, zoom, img_size, scale)
 
         print(f"Number of images to download: {len(image_coords)}.")
 
         outpath = os.path.join(outdir, location)
         if not os.path.exists(outpath):
             os.makedirs(outpath)
-            self.load_country_images(image_coords, location, outpath)
+            self.load_country_images(image_coords, location, outpath, scale)
+
+
         else:
             print(f"Images for country {location} already downloaded.")
 
@@ -80,10 +86,11 @@ class Loader:
         return row_coords
 
 
-    def get_image_coords(self, country_name, zoom, image_size):
+    def get_image_coords(self, country_name, zoom, image_size, scale=1):
         if country_name not in self.country_bounding_boxes:
             raise ValueError(f"Country {country_name} doesn't exist!")
 
+        image_size = 1280 if scale == 2 else 640
         country_coords = self.country_bounding_boxes[country_name]
 
         lats = country_coords["lat"]
@@ -106,15 +113,17 @@ class Loader:
         return coords
 
 
-    def load_country_images(self, image_coords, country, directory):
+    def load_country_images(self, image_coords, country, directory, seg_dir, scale=1):
+
+        size = 1280 if scale == 2 else 640
         for coord in image_coords:
             lat, long = coord
             res = requests.get(
                 "https://maps.googleapis.com/maps/api/staticmap",
                 params={
                     "center": f"{lat},{long}",
-                    "size": "2448x2448",
-                    "scale": "2",
+                    "size": f"{size}x{size}",
+                    "scale": scale,
                     "zoom": "11",
                     "maptype": "satellite",
                     "key": "AIzaSyBDn2wVZ3iyViyiTrlKvFvOCCgmffuKc7w",
@@ -127,6 +136,10 @@ class Loader:
             
             with open(f"{directory}/{country}_{lat}_{long}.jpg", 'wb') as f:
                 f.write(res.content)
+            
+            # update database with loaded images
+            self.db_tool.dump(country, lat, long, f"{directory}/{country}_{lat}_{long}.jpg",
+                              f"{seg_dir}/{directory}/{country}_{lat}_{long}.jpg")
 
 
 

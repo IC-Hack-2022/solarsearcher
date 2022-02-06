@@ -10,7 +10,6 @@ from torchvision import transforms
 
 from models.unet import UNet
 
-
 class Segmenter:
 
     def __init__(self, saved_model):
@@ -19,7 +18,7 @@ class Segmenter:
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model.to(device=self.device)
         self.model.load_state_dict(torch.load(saved_model, self.device))
-
+        
 
     def predict(self, model, full_img, scale):
 

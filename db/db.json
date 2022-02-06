@@ -1,1 +1,16 @@
-{}
+{
+    "Luxembourg": [
+        {
+            "(49.63, 6.13)": {
+                "img_path": "images/Luxembourg/Luxembourg_49.63_6.13.jpg",
+                "seg_path": "1/images/Luxembourg/Luxembourg_49.63_6.13.jpg"
+            }
+        },
+        {
+            "(50.0, 6.13)": {
+                "img_path": "images/Luxembourg/Luxembourg_50.0_6.13.jpg",
+                "seg_path": "1/images/Luxembourg/Luxembourg_50.0_6.13.jpg"
+            }
+        }
+    ]
+}
